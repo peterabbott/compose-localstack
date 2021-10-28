@@ -1,0 +1,37 @@
+version: '3.4'
+
+services:
+  localstack:
+    build: ./localstack/
+    shm_size: '512mb'
+    ports:
+      - '4566:4566'
+    environment:
+      - NO_PROXY=${NO_PROXY:-localhost}
+      - HOSTNAME=localstack
+      - EXTERNAL_HOSTNAME=localstack
+      - SERVICES=sns,s3,sqs,dynamodb,lambda,kinesis
+      - DEBUG=1
+      - LAMBDA_EXECUTOR=docker-reuse
+      - TMPDIR=/tmp
+      - DOCKER_HOST=${DOCKER_HOST:-unix:///var/run/docker.sock}
+      - LAMBDA_REMOTE_DOCKER=true  # Required for local dist mounting lambdas
+      - KINESIS_PROVIDER=kinesalite # might be required for m1 macs, seems to remove JDK dependency
+      - LAMBDA_DOCKER_NETWORK=testing_app_net # Required for lambda -> other containers connection
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    networks:
+      app_net:
+
+networks:
+  app_net:
+    driver: bridge
+    enable_ipv6: true
+
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24
+          gateway: 172.16.238.1
+        - subnet: 2001:3984:3989::/64
+          gateway: 2001:3984:3989::1

@@ -1,0 +1,52 @@
+# aws cli
+aws_cli_setup: &aws_cli_setup
+  aws-cli/setup:
+    configure-default-region: false
+
+# circle
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@2.0.3
+  slack: circleci/slack@3.4.2
+
+executors:
+  default_base:
+    working_directory: ~/job
+    docker:
+      - image: cimg/base:stable
+        auth: # use docker hub auth to prevent throttle
+          # in aws-production context https://hub.docker.com/settings/security
+          username: $DOCKER_HUB_USERNAME
+          password: $DOCKER_HUB_PASSWORD
+    <<: *allowed_environments
+    resource_class: small
+
+
+workflows:
+  main-workflow:
+    jobs:
+      - checking_localstack
+
+jobs:
+  checking_localstack:
+    executor: default_base
+    steps:
+      - checkout
+      - <<: *aws_cli_setup
+      - setup_remote_docker:
+          version: 19.03.13
+      - run:
+        command: |
+          env
+          docker-compose -p testing up -d localstack
+          sleep 30 ## waiting for startup
+      - run:
+          name: Testing Localstack
+          command: |
+            env
+            docker ps
+            docker network ls
+            docker inspect testing_localstack_1 || true
+            docker inspect testing_localstack_1 || true
+            docker logs testing_localstack_1 || true
