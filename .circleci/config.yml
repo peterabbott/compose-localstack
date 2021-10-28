@@ -51,7 +51,16 @@ jobs:
             docker inspect testing_localstack_1 || true
             docker logs testing_localstack_1 || true
       - run:
-          name: Testing Localstack
+          name: Invoke some messages
           command: |
             CONTAINER_ID=$(docker ps -q -a --filter "name=testing_localstack_1")
-            docker exec ${CONTAINER_ID} sh -c 'aws --endpoint-url=http://localstack:4566 lambda invoke --invocation-type Event --function-name test-processor   --payload "{\"Records\":[]}"  /tmp/result.json'
+            docker exec ${CONTAINER_ID} sh -c 'aws --endpoint-url=http://localstack:4566 lambda invoke --invocation-type RequestResponse --function-name test-processor   --payload "{\"Records\":[]}"  /tmp/result.json'
+            docker exec ${CONTAINER_ID} sh -c 'aws --endpoint-url=http://localstack:4566 lambda invoke --invocation-type RequestResponse --function-name test-processor   --payload "{\"Records\":[]}"  /tmp/result.json'
+            docker exec ${CONTAINER_ID} sh -c 'aws --endpoint-url=http://localstack:4566 lambda invoke --invocation-type RequestResponse --function-name test-processor   --payload "{\"Records\":[]}"  /tmp/result.json'
+      - run:
+          name: Save Logs
+          command: |
+            docker-compose -p testing logs localstack
+
+
+
