@@ -36,10 +36,11 @@ jobs:
       - setup_remote_docker:
           version: 19.03.13
       - run:
-        command: |
-          env
-          docker-compose -p testing up -d localstack
-          sleep 30 ## waiting for startup
+          name: Start Localstack
+          command: |
+            env
+            docker-compose -p testing up -d localstack
+            sleep 30 ## waiting for startup
       - run:
           name: Testing Localstack
           command: |
