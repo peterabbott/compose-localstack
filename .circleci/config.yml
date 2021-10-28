@@ -50,3 +50,9 @@ jobs:
             docker inspect testing_localstack_1 || true
             docker inspect testing_localstack_1 || true
             docker logs testing_localstack_1 || true
+      - run:
+          name: Testing Localstack
+          command: |
+            CONTAINER_ID=$(docker ps -q -a --filter "name=testing_localstack_1") 
+            docker exec ${CONTAINER_ID} sh -c 'ls' 
+   
