@@ -19,7 +19,6 @@ executors:
           # in aws-production context https://hub.docker.com/settings/security
           username: $DOCKER_HUB_USERNAME
           password: $DOCKER_HUB_PASSWORD
-    <<: *allowed_environments
     resource_class: small
 
 
