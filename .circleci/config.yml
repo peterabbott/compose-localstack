@@ -53,6 +53,5 @@ jobs:
       - run:
           name: Testing Localstack
           command: |
-            CONTAINER_ID=$(docker ps -q -a --filter "name=testing_localstack_1") 
-            docker exec ${CONTAINER_ID} sh -c 'ls' 
-   
+            CONTAINER_ID=$(docker ps -q -a --filter "name=testing_localstack_1")
+            docker exec ${CONTAINER_ID} sh -c 'aws --endpoint-url=http://localstack:4566 lambda invoke --invocation-type Event --function-name test-processor   --payload $(echo '{"Records":[]}' | base64)  /tmp/result.json'
