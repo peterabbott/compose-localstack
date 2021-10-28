@@ -14,7 +14,6 @@ services:
       - DEBUG=1
       - LAMBDA_EXECUTOR=docker-reuse
       - TMPDIR=/tmp
-      - DOCKER_HOST=${DOCKER_HOST:-unix:///var/run/docker.sock}
       - LAMBDA_REMOTE_DOCKER=true  # Required for local dist mounting lambdas
       - KINESIS_PROVIDER=kinesalite # might be required for m1 macs, seems to remove JDK dependency
       - LAMBDA_DOCKER_NETWORK=testing_app_net # Required for lambda -> other containers connection
